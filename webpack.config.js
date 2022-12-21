@@ -3,16 +3,15 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
     entry: "./src/index.tsx",
+    mode: process.env.NODE_ENV || "development",
     output: {
         path: path.resolve(__dirname, "dist"),
         filename: "index.bundle.js"
     },
     devServer: {
-        static: path.resolve(__dirname, "dist"),
         port: 8080,
         hot: true
     },
-    mode: process.env.NODE_ENV || "development",
     resolve: {
         extensions: [".tsx", ".ts", ".js"]
     },
@@ -38,12 +37,32 @@ module.exports = {
                     "style-loader", "css-loader"
                 ]
             },
+            {
+                test: /\.(scss)$/,
+                use: [
+                    {
+                        loader: 'style-loader'
+                    },
+                    {
+                        loader: 'css-loader'
+                    },
+                    {
+                        loader: 'postcss-loader',
+                        options: {
+                            postcssOptions: {
+                                plugins: () => [
+                                    require('autoprefixer')
+                                ]
+                            }
+                        }
+                    },
+                ]
+            }
         ]
     },
     plugins: [
         new HtmlWebpackPlugin({
-            title: "Chatr",
-            template: path.join(__dirname, "public", "index.html"),
-        }),
+            template: "./src/index.html",
+        })
     ]
 };
